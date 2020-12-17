@@ -16,7 +16,7 @@ public class GameController {
     List<HashSet<Integer>> winningCombinations = new ArrayList<>();
 
 
-    public GameController(GridPane root) {
+    public GameController(GridPane root, Stage stage) {
         this.root = root;
         HashSet<Integer> hashSet = new HashSet();
         hashSet.add(1);
@@ -60,7 +60,7 @@ public class GameController {
         winningCombinations.add(hashSet7);
     }
 
-    public void makeComputerMove() {
+    public void makeComputerMove(Stage stage) {
         List<Tile> tiles = root.getChildren().stream()
                 .filter(node -> node instanceof Tile)
                 .map(node -> ((Tile) node))
@@ -68,7 +68,10 @@ public class GameController {
                 .collect(Collectors.toList());
         Random randomGenerator = new Random();
         int computerTileIndex = randomGenerator.nextInt(tiles.size());
-        tiles.get(computerTileIndex);
+        Tile tile = tiles.get(computerTileIndex);
+        tile.text.setText("O");
+        markedTilesO.add(tile.idNumber);
+        verifyResult(markedTilesO, stage);
     }
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
@@ -78,52 +81,54 @@ public class GameController {
 
     public void runAGame(Tile tile, Stage stage) {
         if (!ifFieldWasUsedBefore(tile)) {
-            if (isLastX) {
-
-                tile.text.setText("O");
-                markedTilesO.add(tile.idNumber);
-                verifyResult(markedTilesO, stage);
-                isLastX = false;
-            } else {
+//            if (isLastX) {
+//                               makeComputerMove(stage);
+//                tile.text.setText("O");
+//                markedTilesO.add(tile.idNumber);
+//                verifyResult(markedTilesO, stage);
+//                isLastX = false;
+//            } else {
                 tile.text.setText("X");
                 markedTilesX.add(tile.idNumber);
                 verifyResult(markedTilesX, stage);
                 isLastX = true;
             }
-        } makeComputerMove();
-    }
-
-    public void verifyResult(Set<Integer> hashSet, Stage stage) {
-        if (winningCombinations.contains(hashSet)) {
-            endOfGame(stage);
         }
-    }
 
-    public void endOfGame(Stage stage) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("End of Game");
-        String message;
-        alert.setHeaderText("Thank you for playing Tic Tac Toe");
-        if (!isLastX) {
-            message = "Won X, Would you like to play new game?";
-        } else {
-            message = "Won O, Would you like to play new game?";
-        }
-        alert.setContentText(message);
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            this.markedTilesX = new HashSet<>();
-            this.markedTilesO = new HashSet<>();
-            isLastX = false;
-            for (int i = 0; i < root.getChildren().size(); i++) {
-                ((Tile) root.getChildren().get(i)).text.setText("");
+        public void verifyResult (Set < Integer > hashSet, Stage stage){
+            if (winningCombinations.contains(markedTilesO)|| winningCombinations.contains(markedTilesX)) {
+                endOfGame(stage);
             }
-        } else {
-            stage.close();
         }
 
+        public void endOfGame(Stage stage){
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("End of Game");
+            String message = "";
+            alert.setHeaderText("Thank you for playing Tic Tac Toe");
+            if (winningCombinations.contains(markedTilesX)) {
+                message = "Won X, Would you like to play new game?";
+            } else if (winningCombinations.contains(markedTilesO)) {
+                message = "Won O, Would you like to play new game?";
+            } else {
+                System.out.println("Remis");
+            }
+            alert.setContentText(message);
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK) {
+                this.markedTilesX = new HashSet<>();
+                this.markedTilesO = new HashSet<>();
+                isLastX = false;
+                for (int i = 0; i < root.getChildren().size(); i++) {
+                    ((Tile) root.getChildren().get(i)).text.setText("");
+                }
+            } else {
+                stage.close();
+            }
+
+        }
     }
-}
+
 
 

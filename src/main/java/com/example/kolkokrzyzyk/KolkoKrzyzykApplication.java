@@ -14,7 +14,7 @@ public class KolkoKrzyzykApplication extends Application {
 
     public Parent createContent(Stage stage) {
         root = new GridPane();
-        controller = new GameController(root);
+        controller = new GameController(root, stage);
         root.setPrefSize(600, 600);
 
         int tileCounter = 0;
@@ -28,8 +28,6 @@ public class KolkoKrzyzykApplication extends Application {
                 root.getChildren().add(tile);
             }
         }
-
-
         return root;
     }
 
@@ -42,7 +40,6 @@ public class KolkoKrzyzykApplication extends Application {
         primaryStage.setScene(new Scene(createContent(primaryStage)));
         primaryStage.setTitle("TicTacToe");
         primaryStage.show();
-
     }
 }
 
