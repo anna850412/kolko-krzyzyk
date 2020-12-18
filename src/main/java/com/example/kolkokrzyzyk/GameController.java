@@ -12,7 +12,6 @@ public class GameController {
     int countX = 0;
     int countO = 0;
     GridPane root;
-  //  boolean isLastX = false;
     Set<Integer> markedTilesX = new HashSet<>();
     Set<Integer> markedTilesO = new HashSet<>();
     List<HashSet<Integer>> winningCombinations = new ArrayList<>();
@@ -76,6 +75,78 @@ public class GameController {
         verifyResult(markedTilesO, stage);
     }
 
+    public void makeComputerMoveAdvanced(Stage stage) {
+        List<Tile> tiles = root.getChildren().stream()
+                .filter(node -> node instanceof Tile)
+                .map(node -> ((Tile) node))
+                .filter(tile -> tile.text.getText().equals(""))
+                .collect(Collectors.toList());
+        Random randomGenerator = new Random();
+        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles.size());
+
+        if (markedTilesO.contains(1) && markedTilesO.contains(2) ||
+                markedTilesO.contains(7) && markedTilesO.contains(5) ||
+                markedTilesO.contains(6) && markedTilesO.contains(9)) {
+            markedTilesO.add(3);
+        } else if (markedTilesO.contains(2) && markedTilesO.contains(3) ||
+                markedTilesO.contains(7) && markedTilesO.contains(4) ||
+                markedTilesO.contains(5) && markedTilesO.contains(9)) {
+            markedTilesO.add(1);
+        } else if (markedTilesO.contains(1) && markedTilesO.contains(4) ||
+                markedTilesO.contains(3) && markedTilesO.contains(5) ||
+                markedTilesO.contains(8) && markedTilesO.contains(9)) {
+            markedTilesO.add(7);
+        } else if (markedTilesO.contains(1) && markedTilesO.contains(5) ||
+                markedTilesO.contains(7) && markedTilesO.contains(8) ||
+                markedTilesO.contains(6) && markedTilesO.contains(3)) {
+            markedTilesO.add(9);
+        } else if (markedTilesO.contains(1) && markedTilesO.contains(3)) {
+            markedTilesO.add(2);
+        } else if (markedTilesO.contains(4) && markedTilesO.contains(6)) {
+            markedTilesO.add(5);
+        } else if (markedTilesO.contains(7) && markedTilesO.contains(9)) {
+            markedTilesO.add(8);
+        } else if (markedTilesO.contains(7) && markedTilesO.contains(1)) {
+            markedTilesO.add(4);
+        } else if (markedTilesO.contains(2) && markedTilesO.contains(8)) {
+            markedTilesO.add(5);
+        } else if (markedTilesO.contains(3) && markedTilesO.contains(9)) {
+            markedTilesO.add(6);
+        } else if (markedTilesX.contains(1) && markedTilesX.contains(2) ||
+                markedTilesX.contains(7) && markedTilesX.contains(5) ||
+                markedTilesX.contains(6) && markedTilesX.contains(9)) {
+            markedTilesO.add(3);
+        } else if (markedTilesX.contains(2) && markedTilesX.contains(3) ||
+                markedTilesX.contains(7) && markedTilesX.contains(4) ||
+                markedTilesX.contains(5) && markedTilesX.contains(9)) {
+            markedTilesO.add(1);
+        } else if (markedTilesX.contains(1) && markedTilesX.contains(4) ||
+                markedTilesX.contains(3) && markedTilesX.contains(5) ||
+                markedTilesX.contains(8) && markedTilesX.contains(9)) {
+            markedTilesO.add(7);
+        } else if (markedTilesX.contains(1) && markedTilesX.contains(5) ||
+                markedTilesX.contains(7) && markedTilesX.contains(8) ||
+                markedTilesX.contains(6) && markedTilesX.contains(3)) {
+            markedTilesO.add(9);
+        } else if (markedTilesX.contains(1) && markedTilesX.contains(3)) {
+            markedTilesO.add(2);
+        } else if (markedTilesX.contains(4) && markedTilesX.contains(6)) {
+            markedTilesO.add(5);
+        } else if (markedTilesX.contains(7) && markedTilesX.contains(9)) {
+            markedTilesO.add(8);
+        } else if (markedTilesX.contains(7) && markedTilesX.contains(1)) {
+            markedTilesO.add(4);
+        } else if (markedTilesX.contains(2) && markedTilesX.contains(8)) {
+            markedTilesO.add(5);
+        } else if (markedTilesX.contains(3) && markedTilesX.contains(9)) {
+            markedTilesO.add(6);
+        }
+        Tile tile = tiles.get(computerTileIndexAdvanced);
+        tile.text.setText("O");
+        markedTilesO.add(tile.idNumber);
+        verifyResult(markedTilesO, stage);
+    }
+
     public boolean ifFieldWasUsedBefore(Tile tile) {
         boolean result = markedTilesO.contains(tile.idNumber) || markedTilesX.contains(tile.idNumber);
         return result;
@@ -83,10 +154,11 @@ public class GameController {
 
     public void runAGame(Tile tile, Stage stage) {
         if (!ifFieldWasUsedBefore(tile)) {
-      tile.text.setText("X");
+            tile.text.setText("X");
             markedTilesX.add(tile.idNumber);
         }
     }
+
     public boolean isDraw() {
         if ((markedTilesO.equals(5) && markedTilesX.equals(4)) || (markedTilesO.equals(4) && markedTilesX.equals(5))) {
         }
@@ -94,10 +166,10 @@ public class GameController {
     }
 
     public void verifyResult(Set<Integer> hashSet, Stage stage) {
-        if (isWinningCombinationXCorrect()||isWinningCombinationOCorrect()) {
+        if (isWinningCombinationXCorrect() || isWinningCombinationOCorrect()) {
             endOfGame(stage);
         }
-        if(isDraw()){
+        if (isDraw()) {
             System.out.println("Remis");
         }
     }
@@ -106,7 +178,9 @@ public class GameController {
         return winningCombinations.stream()
                 .anyMatch(combination -> markedTilesO.containsAll(combination));
 
-    }public boolean isWinningCombinationXCorrect() {
+    }
+
+    public boolean isWinningCombinationXCorrect() {
         return winningCombinations.stream()
                 .anyMatch(combination -> markedTilesX.containsAll(combination));
 
