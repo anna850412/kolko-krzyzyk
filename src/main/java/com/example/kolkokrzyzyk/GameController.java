@@ -9,8 +9,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class GameController {
+    int countX = 0;
+    int countO = 0;
     GridPane root;
-    boolean isLastX = false;
+  //  boolean isLastX = false;
     Set<Integer> markedTilesX = new HashSet<>();
     Set<Integer> markedTilesO = new HashSet<>();
     List<HashSet<Integer>> winningCombinations = new ArrayList<>();
@@ -81,54 +83,64 @@ public class GameController {
 
     public void runAGame(Tile tile, Stage stage) {
         if (!ifFieldWasUsedBefore(tile)) {
-//            if (isLastX) {
-//                               makeComputerMove(stage);
-//                tile.text.setText("O");
-//                markedTilesO.add(tile.idNumber);
-//                verifyResult(markedTilesO, stage);
-//                isLastX = false;
-//            } else {
-                tile.text.setText("X");
-                markedTilesX.add(tile.idNumber);
-                verifyResult(markedTilesX, stage);
-                isLastX = true;
-            }
-        }
-
-        public void verifyResult (Set < Integer > hashSet, Stage stage){
-            if (winningCombinations.contains(markedTilesO)|| winningCombinations.contains(markedTilesX)) {
-                endOfGame(stage);
-            }
-        }
-
-        public void endOfGame(Stage stage){
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("End of Game");
-            String message = "";
-            alert.setHeaderText("Thank you for playing Tic Tac Toe");
-            if (winningCombinations.contains(markedTilesX)) {
-                message = "Won X, Would you like to play new game?";
-            } else if (winningCombinations.contains(markedTilesO)) {
-                message = "Won O, Would you like to play new game?";
-            } else {
-                System.out.println("Remis");
-            }
-            alert.setContentText(message);
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                this.markedTilesX = new HashSet<>();
-                this.markedTilesO = new HashSet<>();
-                isLastX = false;
-                for (int i = 0; i < root.getChildren().size(); i++) {
-                    ((Tile) root.getChildren().get(i)).text.setText("");
-                }
-            } else {
-                stage.close();
-            }
-
+      tile.text.setText("X");
+            markedTilesX.add(tile.idNumber);
         }
     }
+    public boolean isDraw() {
+        if ((markedTilesO.equals(5) && markedTilesX.equals(4)) || (markedTilesO.equals(4) && markedTilesX.equals(5))) {
+        }
+        return false;
+    }
+
+    public void verifyResult(Set<Integer> hashSet, Stage stage) {
+        if (isWinningCombinationXCorrect()||isWinningCombinationOCorrect()) {
+            endOfGame(stage);
+        }
+        if(isDraw()){
+            System.out.println("Remis");
+        }
+    }
+
+    public boolean isWinningCombinationOCorrect() {
+        return winningCombinations.stream()
+                .anyMatch(combination -> markedTilesO.containsAll(combination));
+
+    }public boolean isWinningCombinationXCorrect() {
+        return winningCombinations.stream()
+                .anyMatch(combination -> markedTilesX.containsAll(combination));
+
+    }
+
+    public void endOfGame(Stage stage) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("End of Game");
+        String message = "";
+        alert.setHeaderText("Thank you for playing Tic Tac Toe");
+        if (isWinningCombinationXCorrect()) {
+            message = "Won X, Would you like to play new game?";
+            countX++;
+            System.out.println("Total win for X is: " + countX);
+        } else if (isWinningCombinationOCorrect()) {
+            message = "Won O, Would you like to play new game?";
+            countO++;
+            System.out.println("Total win for O is: " + countO);
+        }
+        alert.setContentText(message);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            this.markedTilesX = new HashSet<>();
+            this.markedTilesO = new HashSet<>();
+            for (int i = 0; i < root.getChildren().size(); i++) {
+                ((Tile) root.getChildren().get(i)).text.setText("");
+            }
+        } else {
+            stage.close();
+        }
+
+    }
+}
 
 
 
