@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+/*
 @DisplayName("Test of all possible selections of Winning Combination")
 public class TestSuite {
 
@@ -211,3 +212,4 @@ public class TestSuite {
         Assertions.assertTrue(gameController.isWinningCombinationXCorrect());
     }
 }
+*/

@@ -11,13 +11,16 @@ import java.util.stream.Collectors;
 public class GameController {
     int countX = 0;
     int countO = 0;
+    Integer requestedNumberOfGames;
+    Tile tile;
     GridPane root;
     Set<Integer> markedTilesX = new HashSet<>();
     Set<Integer> markedTilesO = new HashSet<>();
     List<HashSet<Integer>> winningCombinations = new ArrayList<>();
+    Stage appPrimaryStage;
 
 
-    public GameController(GridPane root, Stage stage) {
+    public GameController(GridPane root) {
         this.root = root;
         HashSet<Integer> hashSet = new HashSet();
         hashSet.add(1);
@@ -61,7 +64,7 @@ public class GameController {
         winningCombinations.add(hashSet7);
     }
 
-    public void makeComputerMove(Stage stage) {
+    public void makeComputerMove() {
         List<Tile> tiles = root.getChildren().stream()
                 .filter(node -> node instanceof Tile)
                 .map(node -> ((Tile) node))
@@ -72,10 +75,10 @@ public class GameController {
         Tile tile = tiles.get(computerTileIndex);
         tile.text.setText("O");
         markedTilesO.add(tile.idNumber);
-        verifyResult(markedTilesO, stage);
+        verifyResult(markedTilesO);
     }
 
-    public void makeComputerMoveAdvanced(Stage stage) {
+    public void makeComputerMoveAdvanced() {
         List<Tile> tiles = root.getChildren().stream()
                 .filter(node -> node instanceof Tile)
                 .map(node -> ((Tile) node))
@@ -87,6 +90,10 @@ public class GameController {
         if (markedTilesO.contains(1) && markedTilesO.contains(2) ||
                 markedTilesO.contains(7) && markedTilesO.contains(5) ||
                 markedTilesO.contains(6) && markedTilesO.contains(9)) {
+            root.getChildren().stream()
+                    .filter(node -> node instanceof Tile && ((Tile) node).idNumber==3)
+                    .findFirst();
+
             markedTilesO.add(3);
         } else if (markedTilesO.contains(2) && markedTilesO.contains(3) ||
                 markedTilesO.contains(7) && markedTilesO.contains(4) ||
@@ -144,7 +151,7 @@ public class GameController {
         Tile tile = tiles.get(computerTileIndexAdvanced);
         tile.text.setText("O");
         markedTilesO.add(tile.idNumber);
-        verifyResult(markedTilesO, stage);
+        verifyResult(markedTilesO);
     }
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
@@ -152,32 +159,32 @@ public class GameController {
         return result;
     }
 
-    public void runAGame(Tile tile, Stage stage) {
+    public void runAGame(Tile tile) {
         if (!ifFieldWasUsedBefore(tile)) {
             tile.text.setText("X");
             markedTilesX.add(tile.idNumber);
+            verifyResult(markedTilesX);
         }
     }
 
     public boolean isDraw() {
-        if ((markedTilesO.equals(5) && markedTilesX.equals(4)) || (markedTilesO.equals(4) && markedTilesX.equals(5))) {
+        if ((markedTilesO.size() == 5 && markedTilesX.size() == 4) || (markedTilesO.size() == 4 && markedTilesX.size() == 5)) {
+            return true;
         }
         return false;
     }
 
-    public void verifyResult(Set<Integer> hashSet, Stage stage) {
-        if (isWinningCombinationXCorrect() || isWinningCombinationOCorrect()) {
-            endOfGame(stage);
+    public void verifyResult(Set<Integer> hashSet) {
+
+            if (isWinningCombinationXCorrect() || isWinningCombinationOCorrect() || isDraw()) {
+//                endOfGame();
+                endOfRound();
+            }
         }
-        if (isDraw()) {
-            System.out.println("Remis");
-        }
-    }
 
     public boolean isWinningCombinationOCorrect() {
         return winningCombinations.stream()
                 .anyMatch(combination -> markedTilesO.containsAll(combination));
-
     }
 
     public boolean isWinningCombinationXCorrect() {
@@ -185,8 +192,28 @@ public class GameController {
                 .anyMatch(combination -> markedTilesX.containsAll(combination));
 
     }
+    public void endOfRound(){
+        if(requestedNumberOfGames<(countX+countO)){
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("End of Round");
+            String message = "";
+            alert.setHeaderText("Thank you for playing Tic Tac Toe");
+            if (isWinningCombinationXCorrect()) {
+                countX++;
+                message = "Won X this round.\"Total win for X is: \" + countX";
+            } else if (isWinningCombinationOCorrect()) {
+                countO++;
+                message = "Won O this round.\"Total win for O is: \" + countO";
+            } else {
+                message = "Draw, Would you like to play again?";
+            }
+            alert.setContentText(message);
 
-    public void endOfGame(Stage stage) {
+        } else {
+            endOfGame();
+        }
+    }
+    public void endOfGame() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("End of Game");
         String message = "";
@@ -199,20 +226,24 @@ public class GameController {
             message = "Won O, Would you like to play new game?";
             countO++;
             System.out.println("Total win for O is: " + countO);
+        } else {
+            message = "Remis,  Would you like to play new game?";
         }
         alert.setContentText(message);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == ButtonType.OK) {
-            this.markedTilesX = new HashSet<>();
-            this.markedTilesO = new HashSet<>();
-            for (int i = 0; i < root.getChildren().size(); i++) {
-                ((Tile) root.getChildren().get(i)).text.setText("");
-            }
-        } else {
-            stage.close();
-        }
+ //       if((countO+countX)< requestedNumberOfGames) {
+            if (result.get() == ButtonType.OK) {
+                this.markedTilesX = new HashSet<>();
+                this.markedTilesO = new HashSet<>();
+                for (int i = 0; i < root.getChildren().size(); i++) {
+                    ((Tile) root.getChildren().get(i)).text.setText("");
+                }
+            } else {
 
+                appPrimaryStage.close();
+            }
+ //       }
     }
 }
 

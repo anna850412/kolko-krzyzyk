@@ -6,13 +6,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
 public class Tile extends StackPane {
     int idNumber;
     Text text = new Text();
 
-    public Tile(GameController controller, Stage stage) {
+    public Tile(GameController controller) {
         Rectangle border = new Rectangle(200, 200);
         border.setFill(null);
         border.setStroke(Color.BLACK);
@@ -23,9 +22,11 @@ public class Tile extends StackPane {
         setOnMouseClicked(event ->
         {
             Tile source = (Tile) event.getSource();
-            controller.runAGame(source, stage);
-            controller.makeComputerMove(stage);
+            controller.runAGame(source);
+//            controller.endOfRound();
+            controller.makeComputerMove();
 //            controller.makeComputerMoveAdvanced(stage);
+
         });
     }
 
