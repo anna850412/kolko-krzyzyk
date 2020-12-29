@@ -23,9 +23,8 @@ public class Tile extends StackPane {
         {
             Tile source = (Tile) event.getSource();
             controller.runAGame(source);
-//            controller.endOfRound();
-            controller.makeComputerMove();
-//            controller.makeComputerMoveAdvanced(stage);
+//            controller.makeComputerMove();
+            controller.makeComputerMoveAdvanced();
 
         });
     }
