@@ -8,18 +8,15 @@ import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Box;
 import javafx.stage.Stage;
-
-import javax.swing.*;
 
 public class KolkoKrzyzykApplication extends Application {
 
-    GridPane root;
-    GameController controller;
+    static GridPane root;
+    static GameController controller;
 
 
-    public Parent createContent() {
+    public static Parent createContent() {
         root = new GridPane();
         controller = new GameController(root);
         root.setPrefSize(600, 600);
@@ -41,10 +38,7 @@ public class KolkoKrzyzykApplication extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
+    public static Scene createAppScene(Stage primaryStage){
         Scene appScene = new Scene(createContent());
         Scene sceneWithButton;
         FlowPane flowpane = new FlowPane();
@@ -58,7 +52,6 @@ public class KolkoKrzyzykApplication extends Application {
         flowpane.getChildren().add(button1);
         flowpane.getChildren().add(button2);
         VBox layout = new VBox(10);
-//        setLayout (new BoxLayout(button1, button2, BoxLayout.Y_AXIS));
         layout.setPadding(new Insets(40, 40, 40, 40));
         layout.getChildren().addAll(nameInput, button, flowpane);
         sceneWithButton = new Scene(layout, 400, 400);
@@ -70,18 +63,28 @@ public class KolkoKrzyzykApplication extends Application {
             primaryStage.show();
         });
         button1.setOnMouseClicked(e -> {
-            controller.makeComputerMove();
+            controller.requestedNumberOfGames = Integer.valueOf(nameInput.getText());
+            System.out.println(nameInput.getText());
             primaryStage.close();
             primaryStage.setScene(appScene);
             primaryStage.show();
+            controller.makeComputerMove();
         });
         button2.setOnMouseClicked(e -> {
-           controller.makeComputerMoveAdvanced();
+            controller.requestedNumberOfGames = Integer.valueOf(nameInput.getText());
+            System.out.println(nameInput.getText());
             primaryStage.close();
             primaryStage.setScene(appScene);
             primaryStage.show();
+            controller.makeComputerMoveAdvanced();
         });
-        primaryStage.setScene(sceneWithButton);
+        return sceneWithButton;
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        primaryStage.setScene(createAppScene(primaryStage));
         primaryStage.setTitle("TicTacToe");
         controller.appPrimaryStage = primaryStage;
         primaryStage.show();
