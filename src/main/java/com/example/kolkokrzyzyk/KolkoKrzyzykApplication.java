@@ -68,7 +68,7 @@ public class KolkoKrzyzykApplication extends Application {
             primaryStage.close();
             primaryStage.setScene(appScene);
             primaryStage.show();
-            controller.makeComputerMove();
+            controller.isAdvanced = false;
         });
         button2.setOnMouseClicked(e -> {
             controller.requestedNumberOfGames = Integer.valueOf(nameInput.getText());
@@ -76,7 +76,7 @@ public class KolkoKrzyzykApplication extends Application {
             primaryStage.close();
             primaryStage.setScene(appScene);
             primaryStage.show();
-            controller.makeComputerMoveAdvanced();
+            controller.isAdvanced = true;
         });
         return sceneWithButton;
     }

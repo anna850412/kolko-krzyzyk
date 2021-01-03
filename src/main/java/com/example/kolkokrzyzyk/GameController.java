@@ -19,13 +19,12 @@ public class GameController {
     Integer countO = 0;
     Integer draw = 0;
     Integer requestedNumberOfGames;
+    boolean isAdvanced;
     GridPane root;
     Set<Integer> markedTilesX = new HashSet<>();
     Set<Integer> markedTilesO = new HashSet<>();
     List<HashSet<Integer>> winningCombinations = new ArrayList<>();
     Stage appPrimaryStage;
-    Stage primaryStage;
-    Scene sceneWithButton;
 
 
     public GameController(GridPane root) {
@@ -93,124 +92,137 @@ public class GameController {
                 .map(node -> ((Tile) node))
                 .filter(tile -> tile.text.getText().equals(""))
                 .collect(Collectors.toList());
-        Random randomGenerator = new Random();
-        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles.size());
-        Tile tile = tiles.get(computerTileIndexAdvanced);
-        tile.text.setText("O");
-        markedTilesO.add(tile.idNumber);
-        verifyResult(markedTilesO);
-        if (!ifFieldWasUsedBefore(tile)) {
-            if ((markedTilesO.contains(1) && markedTilesO.contains(2)) ||
-                    (markedTilesO.contains(7) && markedTilesO.contains(5)) ||
-                    (markedTilesO.contains(6) && markedTilesO.contains(9))) {
-//                root.getChildren().stream()
+//        Random randomGenerator = new Random();
+//        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles.size());
+//        Tile tile = tiles.get(computerTileIndexAdvanced);
+//        tile.text.setText("O");
+//        markedTilesO.add(tile.idNumber);
+//        verifyResult(markedTilesO);
+        HashSet<Integer> integers = new HashSet<>();
+        integers.addAll(markedTilesO);
+        integers.addAll(markedTilesX);
+        List<HashSet<Integer>> collect = winningCombinations.stream().filter(s -> !integers.containsAll(s)).collect(Collectors.toList());
+        Optional<HashSet<Integer>> first = collect.stream().filter(combination -> combination.containsAll(markedTilesX)).findFirst();
+        if (first.isPresent()) {
+            Optional<Integer> tileToSet = first.get().stream().filter(tileNo -> !markedTilesX.contains(tileNo)).findFirst();
+
+            Tile tile = tiles.stream().filter(tile1 -> tile1.idNumber == tileToSet.get()).findFirst().get();
+            tile.text.setText("O");
+            markedTilesO.add(tile.idNumber);
+        }
+
+//        if (!ifFieldWasUsedBefore(tile)) {
+//            if ((markedTilesO.contains(1) && markedTilesO.contains(2)) ||
+//                    (markedTilesO.contains(7) && markedTilesO.contains(5)) ||
+//                    (markedTilesO.contains(6) && markedTilesO.contains(9))) {
+////                root.getChildren().stream()
 //                        .filter(node -> node instanceof Tile && ((Tile) node).idNumber == 3)
 //                        .findAny();
-                markedTilesO.add(3);
-                markedTilesO.add(tile.idNumber);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesO.contains(2) && markedTilesO.contains(3)) ||
-                    (markedTilesO.contains(7) && markedTilesO.contains(4)) ||
-                    (markedTilesO.contains(5) && markedTilesO.contains(9))) {
-                markedTilesO.add(1);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesO.contains(1) && markedTilesO.contains(4)) ||
-                    (markedTilesO.contains(3) && markedTilesO.contains(5)) ||
-                    (markedTilesO.contains(8) && markedTilesO.contains(9))) {
-                markedTilesO.add(7);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesO.contains(1) && markedTilesO.contains(5)) ||
-                    (markedTilesO.contains(7) && markedTilesO.contains(8)) ||
-                    (markedTilesO.contains(6) && markedTilesO.contains(3))) {
-                markedTilesO.add(9);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesO.contains(1) && markedTilesO.contains(3)) {
-                markedTilesO.add(2);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesO.contains(4) && markedTilesO.contains(6)) {
-                markedTilesO.add(5);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesO.contains(7) && markedTilesO.contains(9)) {
-                markedTilesO.add(8);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesO.contains(7) && markedTilesO.contains(1)) {
-                markedTilesO.add(4);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesO.contains(2) && markedTilesO.contains(8)) {
-                markedTilesO.add(5);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesO.contains(3) && markedTilesO.contains(9)) {
-                markedTilesO.add(6);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesX.contains(1) && markedTilesX.contains(2)) ||
-                    (markedTilesX.contains(7) && markedTilesX.contains(5)) ||
-                    (markedTilesX.contains(6) && markedTilesX.contains(9))) {
-                markedTilesO.add(3);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesX.contains(2) && markedTilesX.contains(3)) ||
-                    (markedTilesX.contains(7) && markedTilesX.contains(4)) ||
-                    (markedTilesX.contains(5) && markedTilesX.contains(9))) {
-                markedTilesO.add(1);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesX.contains(1) && markedTilesX.contains(4)) ||
-                    (markedTilesX.contains(3) && markedTilesX.contains(5)) ||
-                    (markedTilesX.contains(8) && markedTilesX.contains(9))) {
-                markedTilesO.add(7);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if ((markedTilesX.contains(1) && markedTilesX.contains(5)) ||
-                    (markedTilesX.contains(7) && markedTilesX.contains(8)) ||
-                    (markedTilesX.contains(6) && markedTilesX.contains(3))) {
-                markedTilesO.add(9);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(1) && markedTilesX.contains(3)) {
-                markedTilesO.add(2);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(4) && markedTilesX.contains(6)) {
-                markedTilesO.add(5);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(7) && markedTilesX.contains(9)) {
-                markedTilesO.add(8);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(7) && markedTilesX.contains(1)) {
-                markedTilesO.add(4);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(2) && markedTilesX.contains(8)) {
-                markedTilesO.add(5);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(3) && markedTilesX.contains(9)) {
-                markedTilesO.add(6);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            } else if (markedTilesX.contains(2) && markedTilesX.contains(5)) {
-                root.getChildren().stream()
-                        .filter(node -> node instanceof Tile && ((Tile) node).idNumber == 8)
-                        .findFirst();
-                markedTilesO.add(8);
-                tile.text.setText("O");
-                verifyResult(markedTilesO);
-            }
+//                markedTilesO.add(3);
+//                markedTilesO.add(tile.idNumber);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesO.contains(2) && markedTilesO.contains(3)) ||
+//                    (markedTilesO.contains(7) && markedTilesO.contains(4)) ||
+//                    (markedTilesO.contains(5) && markedTilesO.contains(9))) {
+//                markedTilesO.add(1);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesO.contains(1) && markedTilesO.contains(4)) ||
+//                    (markedTilesO.contains(3) && markedTilesO.contains(5)) ||
+//                    (markedTilesO.contains(8) && markedTilesO.contains(9))) {
+//                markedTilesO.add(7);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesO.contains(1) && markedTilesO.contains(5)) ||
+//                    (markedTilesO.contains(7) && markedTilesO.contains(8)) ||
+//                    (markedTilesO.contains(6) && markedTilesO.contains(3))) {
+//                markedTilesO.add(9);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesO.contains(1) && markedTilesO.contains(3)) {
+//                markedTilesO.add(2);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesO.contains(4) && markedTilesO.contains(6)) {
+//                markedTilesO.add(5);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesO.contains(7) && markedTilesO.contains(9)) {
+//                markedTilesO.add(8);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesO.contains(7) && markedTilesO.contains(1)) {
+//                markedTilesO.add(4);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesO.contains(2) && markedTilesO.contains(8)) {
+//                markedTilesO.add(5);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesO.contains(3) && markedTilesO.contains(9)) {
+//                markedTilesO.add(6);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesX.contains(1) && markedTilesX.contains(2)) ||
+//                    (markedTilesX.contains(7) && markedTilesX.contains(5)) ||
+//                    (markedTilesX.contains(6) && markedTilesX.contains(9))) {
+//                markedTilesO.add(3);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesX.contains(2) && markedTilesX.contains(3)) ||
+//                    (markedTilesX.contains(7) && markedTilesX.contains(4)) ||
+//                    (markedTilesX.contains(5) && markedTilesX.contains(9))) {
+//                markedTilesO.add(1);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesX.contains(1) && markedTilesX.contains(4)) ||
+//                    (markedTilesX.contains(3) && markedTilesX.contains(5)) ||
+//                    (markedTilesX.contains(8) && markedTilesX.contains(9))) {
+//                markedTilesO.add(7);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if ((markedTilesX.contains(1) && markedTilesX.contains(5)) ||
+//                    (markedTilesX.contains(7) && markedTilesX.contains(8)) ||
+//                    (markedTilesX.contains(6) && markedTilesX.contains(3))) {
+//                markedTilesO.add(9);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(1) && markedTilesX.contains(3)) {
+//                markedTilesO.add(2);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(4) && markedTilesX.contains(6)) {
+//                markedTilesO.add(5);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(7) && markedTilesX.contains(9)) {
+//                markedTilesO.add(8);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(7) && markedTilesX.contains(1)) {
+//                markedTilesO.add(4);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(2) && markedTilesX.contains(8)) {
+//                markedTilesO.add(5);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(3) && markedTilesX.contains(9)) {
+//                markedTilesO.add(6);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            } else if (markedTilesX.contains(2) && markedTilesX.contains(5)) {
+//                root.getChildren().stream()
+//                        .filter(node -> node instanceof Tile && ((Tile) node).idNumber == 8)
+//                        .findFirst();
+//                markedTilesO.add(8);
+//                tile.text.setText("O");
+//                verifyResult(markedTilesO);
+//            }
 
-        }
     }
+
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
         boolean result = markedTilesO.contains(tile.idNumber) || markedTilesX.contains(tile.idNumber);
@@ -255,41 +267,41 @@ public class GameController {
         alert.setTitle("End of Round");
         String message = "";
         alert.setHeaderText("Thank you for playing Tic Tac Toe");
-        if (requestedNumberOfGames > (countX + countO + draw)) {
-            if (isWinningCombinationXCorrect()) {
-                countX++;
-                message = "X won this round. Total win for X is: " + countX;
-            } else if (isWinningCombinationOCorrect()) {
-                countO++;
-                message = "O won this round. Total win for O is: " + countO;
-            } else {
-                draw++;
-                message = "Draw. Total draw in this game is: " + draw;
-            }
-            alert.setContentText(message);
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK) {
-                this.markedTilesX = new HashSet<>();
-                this.markedTilesO = new HashSet<>();
-                for (int i = 0; i < root.getChildren().size(); i++) {
-                    ((Tile) root.getChildren().get(i)).text.setText("");
-                }
-            } else {
-                appPrimaryStage.close();
+        if (isWinningCombinationXCorrect()) {
+            countX++;
+            message = "X won this round. Total win for X is: " + countX;
+        } else if (isWinningCombinationOCorrect()) {
+            countO++;
+            message = "O won this round. Total win for O is: " + countO;
+        } else {
+            draw++;
+            message = "Draw. Total draw in this game is: " + draw;
+        }
+        alert.setContentText(message);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == ButtonType.OK) {
+            this.markedTilesX = new HashSet<>();
+            this.markedTilesO = new HashSet<>();
+            for (int i = 0; i < root.getChildren().size(); i++) {
+                ((Tile) root.getChildren().get(i)).text.setText("");
             }
         } else {
+            appPrimaryStage.close();
+        }
+        if (requestedNumberOfGames >= (countX + countO + draw)) {
             endOfGame();
         }
     }
+
 
     public void endOfGame() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("End of Game");
         String message = "";
         alert.setHeaderText("Thank you for playing Tic Tac Toe");
-        if (isWinningCombinationXCorrect()) {
+        if (countX > countO) {
             message = "Won X, Would you like to play new game?";
-        } else if (isWinningCombinationOCorrect()) {
+        } else if (countO > countX) {
             message = "Won O, Would you like to play new game?";
         } else {
             message = "Draw. Would you like to play again?";
@@ -325,10 +337,11 @@ public class GameController {
             System.out.println("wystąpił błąd: " + e);
         }
     }
+
     File savedHashMaps = new File("ranking.list");
     Map<String, Long> map = new HashMap<>();
 
-    public void saveMap () {
+    public void saveMap() {
         try {
             ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(savedHashMaps));
             oos.writeObject(map);
@@ -338,7 +351,7 @@ public class GameController {
         }
     }
 
-    public void loadMap () {
+    public void loadMap() {
         try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(savedHashMaps));
             Object readMap = ois.readObject();
