@@ -92,26 +92,63 @@ public class GameController {
                 .map(node -> ((Tile) node))
                 .filter(tile -> tile.text.getText().equals(""))
                 .collect(Collectors.toList());
-//        Random randomGenerator = new Random();
-//        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles.size());
-//        Tile tile = tiles.get(computerTileIndexAdvanced);
-//        tile.text.setText("O");
-//        markedTilesO.add(tile.idNumber);
-//        verifyResult(markedTilesO);
+
         HashSet<Integer> integers = new HashSet<>();
         integers.addAll(markedTilesO);
         integers.addAll(markedTilesX);
-        List<HashSet<Integer>> collect = winningCombinations.stream().filter(s -> !integers.containsAll(s)).collect(Collectors.toList());
-        Optional<HashSet<Integer>> first = collect.stream().filter(combination -> combination.containsAll(markedTilesX)).findFirst();
+        List<HashSet<Integer>> collect = winningCombinations.stream()
+                .filter(s -> !integers.containsAll(s))
+                .collect(Collectors.toList());
+        Optional<HashSet<Integer>> first = collect.stream()
+                .filter(combination -> combination.containsAll(markedTilesX))
+                .findFirst();
         if (first.isPresent()) {
-            Optional<Integer> tileToSet = first.get().stream().filter(tileNo -> !markedTilesX.contains(tileNo)).findFirst();
+            Optional<Integer> tileToSet = first.get().stream()
+                    .filter(tileNo -> !markedTilesX.contains(tileNo))
+                    .findFirst();
 
             Tile tile = tiles.stream().filter(tile1 -> tile1.idNumber == tileToSet.get()).findFirst().get();
             tile.text.setText("O");
             markedTilesO.add(tile.idNumber);
+        } else {
+            List<Tile> tiles2 = root.getChildren().stream()
+                    .filter(node -> node instanceof Tile)
+                    .map(node -> ((Tile) node))
+                    .filter(tile -> tile.text.getText().equals(""))
+                    .collect(Collectors.toList());
+
+            HashSet<Integer> integers2 = new HashSet<>();
+            integers2.addAll(markedTilesO);
+            integers2.addAll(markedTilesX);
+            List<HashSet<Integer>> collect2 = winningCombinations.stream()
+                    .filter(s -> !integers2.containsAll(s))
+                    .collect(Collectors.toList());
+            Optional<HashSet<Integer>> first2 = collect2.stream()
+                    .filter(combination -> !combination.containsAll(markedTilesX))
+                    .findFirst();
+            if (first2.isPresent()) {
+                Optional<Integer> tileToSet2 = first2.get().stream()
+                        .filter(tileNo -> !markedTilesX.contains(tileNo))
+                        .findFirst();
+
+                Tile tile = tiles2.stream().filter(tile2 -> tile2.idNumber == tileToSet2.get()).findFirst().get();
+                tile.text.setText("O");
+                markedTilesO.add(tile.idNumber);
+
+   /*         List<Tile> tiles2 = root.getChildren().stream()
+                    .filter(node -> node instanceof Tile)
+                    .map(node -> ((Tile) node))
+                    .filter(tile -> tile.text.getText().equals(""))
+                    .collect(Collectors.toList());
+        Random randomGenerator = new Random();
+        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles2.size());
+        Tile tile = tiles2.get(computerTileIndexAdvanced);
+        tile.text.setText("O");
+        markedTilesO.add(tile.idNumber);
+        verifyResult(markedTilesO);*/
+            }
         }
     }
-
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
         boolean result = markedTilesO.contains(tile.idNumber) || markedTilesX.contains(tile.idNumber);
@@ -177,10 +214,12 @@ public class GameController {
         } else {
             appPrimaryStage.close();
         }
-        if (requestedNumberOfGames >= (countX + countO + draw)) {
+        if (requestedNumberOfGames <= (countX + countO + draw)) {
             endOfGame();
         }
+
     }
+
 
 
     public void endOfGame() {
