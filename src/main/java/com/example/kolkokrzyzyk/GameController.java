@@ -85,6 +85,7 @@ public class GameController {
         verifyResult(markedTilesO);
     }
 
+
     public void makeComputerMoveAdvanced() {
 
         List<Tile> tiles = root.getChildren().stream()
@@ -104,7 +105,7 @@ public class GameController {
                 .findFirst();
         if (first.isPresent()) {
             Optional<Integer> tileToSet = first.get().stream()
-                    .filter(tileNo -> !markedTilesX.contains(tileNo))
+                    .filter(tileNo -> !markedTilesX.contains(tileNo) && !markedTilesO.contains(tileNo))
                     .findFirst();
 
             Tile tile = tiles.stream()
@@ -112,45 +113,57 @@ public class GameController {
                     .findFirst().get();
             tile.text.setText("O");
             markedTilesO.add(tile.idNumber);
-        } else if (!first.isPresent()){
-            for (HashSet<Integer> win : winningCombinations) {
+        } else {
+            HashSet<Integer> combination = new HashSet<>();
+            for (HashSet<Integer> win : collect) {
                 int count = 0;
                 for (Integer mark : markedTilesX) {
-
                     if (win.contains(mark)) {
                         count++;
                     }
-
                     if (count == 2) {
-                        Integer missing = win.stream()
-                                .filter(x -> !markedTilesX.contains(x))
-                                .findFirst().get();
-
-                        Tile tile = root.getChildren().stream()
-                                .filter(node -> node instanceof Tile)
-                                .map(node -> ((Tile) node))
-                                .filter(t -> t.idNumber == missing)
-                                .findFirst().get();
-                        tile.text.setText("O");
-                        markedTilesO.add(tile.idNumber);
-                        verifyResult(markedTilesO);
+                        combination = win;
                     }
                 }
+                if (!combination.isEmpty()) {
+                    Integer missing = combination.stream()
+                            .filter(x -> !markedTilesX.contains(x))
+                            .findFirst().get();
+
+                    Tile tile = root.getChildren().stream()
+                            .filter(node -> node instanceof Tile)
+                            .map(node -> ((Tile) node))
+                            .filter(t -> t.idNumber == missing)
+                            .findFirst().get();
+                    tile.text.setText("O");
+                    markedTilesO.add(tile.idNumber);
+                    verifyResult(markedTilesO);
+                    break;
+                }
             }
-        } else {
-                        List<Tile> tiles2 = root.getChildren().stream()
-                                .filter(node -> node instanceof Tile)
-                                .map(node -> ((Tile) node))
-                                .filter(tile -> tile.text.getText().equals(""))
-                                .collect(Collectors.toList());
-                        Random randomGenerator = new Random();
-                        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles2.size());
-                        Tile tile = tiles2.get(computerTileIndexAdvanced);
-                        tile.text.setText("O");
-                        markedTilesO.add(tile.idNumber);
-                        verifyResult(markedTilesO);
+            if (combination.isEmpty()) {
+                List<Tile> tiles2 = root.getChildren().stream()
+                        .filter(node -> node instanceof Tile)
+                        .map(node -> ((Tile) node))
+                        .filter(tile -> tile.text.getText().equals(""))
+                        .collect(Collectors.toList());
+                Random randomGenerator = new Random();
+                int computerTileIndexAdvanced = randomGenerator.nextInt(tiles2.size());
+                Tile tile = tiles2.get(computerTileIndexAdvanced);
+                tile.text.setText("O");
+                markedTilesO.add(tile.idNumber);
+
+                verifyResult(markedTilesO);
+
             }
+
         }
+
+    }
+
+
+
+
 
 
 
@@ -178,7 +191,7 @@ public class GameController {
                         .filter(tile2 -> tile2.idNumber == tileToSet2.get())
                         .findFirst().get();*/
 
-        //   }
+//   }
 
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
@@ -266,6 +279,9 @@ public class GameController {
         }
         alert.setContentText(message);
         Optional<ButtonType> result = alert.showAndWait();
+        countX = 0;
+        countO = 0;
+        draw = 0;
         if (result.get() == ButtonType.OK) {
             this.markedTilesX = new HashSet<>();
             this.markedTilesO = new HashSet<>();
