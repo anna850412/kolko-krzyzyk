@@ -107,11 +107,54 @@ public class GameController {
                     .filter(tileNo -> !markedTilesX.contains(tileNo))
                     .findFirst();
 
-            Tile tile = tiles.stream().filter(tile1 -> tile1.idNumber == tileToSet.get()).findFirst().get();
+            Tile tile = tiles.stream()
+                    .filter(tile1 -> tile1.idNumber == tileToSet.get())
+                    .findFirst().get();
             tile.text.setText("O");
             markedTilesO.add(tile.idNumber);
+        } else if (!first.isPresent()){
+            for (HashSet<Integer> win : winningCombinations) {
+                int count = 0;
+                for (Integer mark : markedTilesX) {
+
+                    if (win.contains(mark)) {
+                        count++;
+                    }
+
+                    if (count == 2) {
+                        Integer missing = win.stream()
+                                .filter(x -> !markedTilesX.contains(x))
+                                .findFirst().get();
+
+                        Tile tile = root.getChildren().stream()
+                                .filter(node -> node instanceof Tile)
+                                .map(node -> ((Tile) node))
+                                .filter(t -> t.idNumber == missing)
+                                .findFirst().get();
+                        tile.text.setText("O");
+                        markedTilesO.add(tile.idNumber);
+                        verifyResult(markedTilesO);
+                    }
+                }
+            }
         } else {
-            List<Tile> tiles2 = root.getChildren().stream()
+                        List<Tile> tiles2 = root.getChildren().stream()
+                                .filter(node -> node instanceof Tile)
+                                .map(node -> ((Tile) node))
+                                .filter(tile -> tile.text.getText().equals(""))
+                                .collect(Collectors.toList());
+                        Random randomGenerator = new Random();
+                        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles2.size());
+                        Tile tile = tiles2.get(computerTileIndexAdvanced);
+                        tile.text.setText("O");
+                        markedTilesO.add(tile.idNumber);
+                        verifyResult(markedTilesO);
+            }
+        }
+
+
+
+           /* List<Tile> tiles2 = root.getChildren().stream()
                     .filter(node -> node instanceof Tile)
                     .map(node -> ((Tile) node))
                     .filter(tile -> tile.text.getText().equals(""))
@@ -131,24 +174,12 @@ public class GameController {
                         .filter(tileNo -> !markedTilesX.contains(tileNo))
                         .findFirst();
 
-                Tile tile = tiles2.stream().filter(tile2 -> tile2.idNumber == tileToSet2.get()).findFirst().get();
-                tile.text.setText("O");
-                markedTilesO.add(tile.idNumber);
+                Tile tile = tiles2.stream()
+                        .filter(tile2 -> tile2.idNumber == tileToSet2.get())
+                        .findFirst().get();*/
 
-   /*         List<Tile> tiles2 = root.getChildren().stream()
-                    .filter(node -> node instanceof Tile)
-                    .map(node -> ((Tile) node))
-                    .filter(tile -> tile.text.getText().equals(""))
-                    .collect(Collectors.toList());
-        Random randomGenerator = new Random();
-        int computerTileIndexAdvanced = randomGenerator.nextInt(tiles2.size());
-        Tile tile = tiles2.get(computerTileIndexAdvanced);
-        tile.text.setText("O");
-        markedTilesO.add(tile.idNumber);
-        verifyResult(markedTilesO);*/
-            }
-        }
-    }
+        //   }
+
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
         boolean result = markedTilesO.contains(tile.idNumber) || markedTilesX.contains(tile.idNumber);
@@ -219,7 +250,6 @@ public class GameController {
         }
 
     }
-
 
 
     public void endOfGame() {
