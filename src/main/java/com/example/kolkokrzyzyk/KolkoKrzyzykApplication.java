@@ -15,7 +15,6 @@ public class KolkoKrzyzykApplication extends Application {
     static GridPane root;
     static GameController controller;
 
-
     public static Parent createContent() {
         root = new GridPane();
         controller = new GameController(root);
@@ -38,7 +37,8 @@ public class KolkoKrzyzykApplication extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-    public static Scene createAppScene(Stage primaryStage){
+
+    public static Scene createAppScene(Stage primaryStage) {
         Scene appScene = new Scene(createContent());
         Scene sceneWithButton;
         FlowPane flowpane = new FlowPane();

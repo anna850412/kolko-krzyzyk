@@ -1,18 +1,12 @@
 package com.example.kolkokrzyzyk;
 
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class GameController {
     Integer countX = 0;
@@ -25,7 +19,6 @@ public class GameController {
     Set<Integer> markedTilesO = new HashSet<>();
     List<HashSet<Integer>> winningCombinations = new ArrayList<>();
     Stage appPrimaryStage;
-
 
     public GameController(GridPane root) {
         this.root = root;
@@ -85,9 +78,7 @@ public class GameController {
         verifyResult(markedTilesO);
     }
 
-
     public void makeComputerMoveAdvanced() {
-
         List<Tile> tiles = root.getChildren().stream()
                 .filter(node -> node instanceof Tile)
                 .map(node -> ((Tile) node))
@@ -152,47 +143,10 @@ public class GameController {
                 Tile tile = tiles2.get(computerTileIndexAdvanced);
                 tile.text.setText("O");
                 markedTilesO.add(tile.idNumber);
-
                 verifyResult(markedTilesO);
-
             }
-
         }
-
     }
-
-
-
-
-
-
-
-           /* List<Tile> tiles2 = root.getChildren().stream()
-                    .filter(node -> node instanceof Tile)
-                    .map(node -> ((Tile) node))
-                    .filter(tile -> tile.text.getText().equals(""))
-                    .collect(Collectors.toList());
-
-            HashSet<Integer> integers2 = new HashSet<>();
-            integers2.addAll(markedTilesO);
-            integers2.addAll(markedTilesX);
-            List<HashSet<Integer>> collect2 = winningCombinations.stream()
-                    .filter(s -> !integers2.containsAll(s))
-                    .collect(Collectors.toList());
-            Optional<HashSet<Integer>> first2 = collect2.stream()
-                    .filter(combination -> !combination.containsAll(markedTilesX))
-                    .findFirst();
-            if (first2.isPresent()) {
-                Optional<Integer> tileToSet2 = first2.get().stream()
-                        .filter(tileNo -> !markedTilesX.contains(tileNo))
-                        .findFirst();
-
-                Tile tile = tiles2.stream()
-                        .filter(tile2 -> tile2.idNumber == tileToSet2.get())
-                        .findFirst().get();*/
-
-//   }
-
 
     public boolean ifFieldWasUsedBefore(Tile tile) {
         boolean result = markedTilesO.contains(tile.idNumber) || markedTilesX.contains(tile.idNumber);
@@ -228,9 +182,7 @@ public class GameController {
     public boolean isWinningCombinationXCorrect() {
         return winningCombinations.stream()
                 .anyMatch(combination -> markedTilesX.containsAll(combination));
-
     }
-
 
     public void endOfRound() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -263,7 +215,6 @@ public class GameController {
         }
 
     }
-
 
     public void endOfGame() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

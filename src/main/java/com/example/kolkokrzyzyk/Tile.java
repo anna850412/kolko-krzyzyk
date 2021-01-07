@@ -25,12 +25,10 @@ public class Tile extends StackPane {
             controller.runAGame(source);
             if (controller.isAdvanced) {
 
-            controller.makeComputerMoveAdvanced();
-        } else {
-           controller.makeComputerMove();
+                controller.makeComputerMoveAdvanced();
+            } else {
+                controller.makeComputerMove();
             }
-
         });
     }
-
 }
